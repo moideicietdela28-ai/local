@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: jackson-storm-ai
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: Moideici31\
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: jackson-storm-db
+          property: connectionString
+
+databases:
+  - name: local-ia
+    plan: free
