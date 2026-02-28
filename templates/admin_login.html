@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Connexion</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a14; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 36px; width: 360px; }
+        h1 { font-size: 1.3rem; margin-bottom: 6px; }
+        p { color: #888; font-size: 0.88rem; margin-bottom: 24px; }
+        label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+        input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.9rem; margin-bottom: 14px; font-family: 'Inter', sans-serif; }
+        input:focus { outline: none; border-color: #7c3aed; }
+        button { width: 100%; padding: 12px; background: #7c3aed; color: #fff; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+        button:hover { background: #6d28d9; }
+        .error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; border-radius: 8px; padding: 10px; margin-bottom: 14px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔒 Administration</h1>
+        <p>Accès réservé aux administrateurs</p>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <form method="POST">
+            <label>Identifiant</label>
+            <input type="text" name="username" required autofocus>
+            <label>Mot de passe</label>
+            <input type="password" name="password" required>
+            <button type="submit">Connexion</button>
+        </form>
+    </div>
+</body>
+</html>

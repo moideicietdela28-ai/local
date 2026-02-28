@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jackson Storm AI — Connexion</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f9f6f1;
+            color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container { width: 100%; max-width: 400px; }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo .icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #d4793a, #e8956b);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 16px rgba(212,121,58,0.25);
+        }
+        .logo h1 { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; }
+        .logo p { color: #888; font-size: 0.88rem; margin-top: 4px; }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e8e2d9;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+        }
+
+        .tabs {
+            display: flex;
+            background: #f4f0eb;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 9px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #888;
+            transition: all 0.2s;
+        }
+        .tab.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.82rem; color: #555; margin-bottom: 6px; font-weight: 500; }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 11px 14px;
+            background: #faf8f5;
+            border: 1px solid #e0d9cf;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-size: 0.92rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: #d4793a; background: #fff; }
+
+        .avatar-section { margin-bottom: 16px; }
+        .avatar-section label { display: block; font-size: 0.82rem; color: #555; margin-bottom: 8px; font-weight: 500; }
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        .emoji-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #f4f0eb;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .emoji-btn:hover { background: #ede8e0; }
+        .emoji-btn.selected { border-color: #d4793a; background: rgba(212,121,58,0.1); }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #d4793a;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #bf6a2e; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,121,58,0.3); }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+
+        .form-panel { display: none; }
+        .form-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="icon">🤖</div>
+            <h1>Jackson Storm AI</h1>
+            <p>Votre assistant intelligent</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('login')">Connexion</div>
+                <div class="tab" onclick="switchTab('register')">Inscription</div>
+            </div>
+
+            <div id="error-box" class="error" style="display:none"></div>
+
+            <!-- Login -->
+            <div id="panel-login" class="form-panel active">
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" id="login-username" placeholder="Votre nom" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn" onclick="doLogin()">Se connecter</button>
+            </div>
+
+            <!-- Register -->
+            <div id="panel-register" class="form-panel">
+                <div class="form-group">
+                    <label>Nom d'utilisateur</label>
+                    <input type="text" id="reg-username" placeholder="Choisissez un nom" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="reg-password" placeholder="4 caractères minimum" autocomplete="new-password">
+                </div>
+                <div class="avatar-section">
+                    <label>Choisissez votre avatar</label>
+                    <div class="emoji-grid" id="emoji-grid"></div>
+                </div>
+                <button class="btn" onclick="doRegister()">Créer mon compte</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EMOJIS = ['👤','😎','🧑‍💻','👩‍💻','🧑‍🎨','🦊','🐼','🐨','🦁','🐯','🦄','🐸','🤖','👾','🎭','🎮','🚀','⚡','🔥','💎','🌊','🌸','🍀','🎯'];
+        let selectedEmoji = '👤';
+
+        function buildEmojiGrid() {
+            const grid = document.getElementById('emoji-grid');
+            EMOJIS.forEach(e => {
+                const btn = document.createElement('button');
+                btn.className = 'emoji-btn' + (e === selectedEmoji ? ' selected' : '');
+                btn.textContent = e;
+                btn.type = 'button';
+                btn.onclick = () => {
+                    selectedEmoji = e;
+                    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                };
+                grid.appendChild(btn);
+            });
+        }
+        buildEmojiGrid();
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
+            document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+            document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+            hideError();
+        }
+
+        function showError(msg) {
+            const box = document.getElementById('error-box');
+            box.textContent = msg;
+            box.style.display = 'block';
+        }
+        function hideError() { document.getElementById('error-box').style.display = 'none'; }
+
+        async function doLogin() {
+            hideError();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            if (!username || !password) return showError('Remplissez tous les champs');
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+            if (data.ok) window.location.href = '/';
+            else showError(data.error || 'Erreur');
+        }
+
+        async function doRegister() {
+            hideError();
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            if (!username || !password) return showError('Remplissez tous les champs');
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password, avatar_emoji: selectedEmoji})
+            });
+            const data = await res.json();
+            if (data.ok) window.location.href = '/';
+            else showError(data.error || 'Erreur');
+        }
+
+        document.addEventListener('keypress', e => {
+            if (e.key !== 'Enter') return;
+            if (document.getElementById('panel-login').classList.contains('active')) doLogin();
+            else doRegister();
+        });
+    </script>
+</body>
+</html>

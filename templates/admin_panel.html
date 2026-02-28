@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a14; color: #e5e5e5; min-height: 100vh; }
+        header { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        header h1 { font-size: 1.1rem; font-weight: 700; }
+        .logout { color: #f87171; font-size: 0.85rem; text-decoration: none; }
+        .main { padding: 32px; max-width: 1000px; margin: 0 auto; }
+
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-align: center; }
+        .stat .value { font-size: 2rem; font-weight: 700; color: #a78bfa; }
+        .stat .label { color: #888; font-size: 0.85rem; margin-top: 4px; }
+
+        h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: #a78bfa; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 14px; font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        td { padding: 12px 14px; font-size: 0.88rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .avatar { font-size: 1.3rem; }
+        .avatar img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+        .btn-sm { padding: 5px 12px; border: none; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; }
+        .btn-del { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+        .btn-del:hover { background: rgba(239,68,68,0.25); }
+        .btn-mem { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); margin-right: 6px; }
+        .btn-mem:hover { background: rgba(167,139,250,0.25); }
+        .actions { display: flex; gap: 6px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🛡️ Panneau Admin — Jackson Storm AI</h1>
+        <a href="/admin/logout" class="logout">Déconnexion</a>
+    </header>
+
+    <div class="main">
+        <div class="stats">
+            <div class="stat">
+                <div class="value">{{ users|length }}</div>
+                <div class="label">Utilisateurs</div>
+            </div>
+            <div class="stat">
+                <div class="value">{{ total_messages }}</div>
+                <div class="label">Messages échangés</div>
+            </div>
+            <div class="stat">
+                <div class="value">{{ total_files }}</div>
+                <div class="label">Fichiers stockés</div>
+            </div>
+        </div>
+
+        <h2>👥 Utilisateurs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Nom</th>
+                    <th>Créé le</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                {% for user in users %}
+                <tr id="row-{{ user.id }}">
+                    <td class="avatar">
+                        {% if user.avatar_type == 'image' %}
+                            <img src="{{ user.avatar_b64 }}" alt="av">
+                        {% else %}
+                            {{ user.avatar_emoji }}
+                        {% endif %}
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-sm btn-mem" onclick="resetMemory({{ user.id }})">🧠 Reset mémoire</button>
+                            <button class="btn-sm btn-del" onclick="deleteUser({{ user.id }})">🗑️ Supprimer</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function deleteUser(id) {
+            if (!confirm('Supprimer cet utilisateur et toutes ses données ?')) return;
+            const res = await fetch(`/admin/users/${id}`, {method: 'DELETE'});
+            const data = await res.json();
+            if (data.ok) document.getElementById('row-' + id).remove();
+        }
+
+        async function resetMemory(id) {
+            if (!confirm('Réinitialiser la mémoire de cet utilisateur ?')) return;
+            const res = await fetch(`/admin/users/${id}/reset_memory`, {method: 'POST'});
+            const data = await res.json();
+            if (data.ok) alert('✅ Mémoire réinitialisée');
+        }
+    </script>
+</body>
+</html>
